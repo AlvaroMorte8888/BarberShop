@@ -36,6 +36,7 @@ get '/visit' do
 	erb :visit
 end
 
+
 post '/visit' do
 
 	@username = params[:username]
@@ -71,3 +72,31 @@ post '/visit' do
 
 end
 
+
+
+get '/contacts' do
+	erb :contacts
+end
+
+post '/contacts' do 
+
+	@email = params[:email]
+	@text = params[:text]
+
+		# хеш
+	hh = { 	:email => 'Введите email',
+			:text => 'Введите text' }
+
+	@error = hh.select {|key,_| params[key] == ""}.values.join(", ")
+
+	if @error != ''
+		return erb :contacts
+	end
+	
+ erb "Даныне получены"
+end	
+
+
+get '/showusers' do
+	erb :showusers
+end
