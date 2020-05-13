@@ -3,13 +3,31 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 
+
+def is_barber_exists? db, name # db - принимает обьект для работы с базой данной  || name - имя парикмахера, будет спрашивать есть он или нету || эта функция обращаеться в db 41 строка
+	db.execute('select*from Barbers where name=?', [name]).length > 0 # выражение возврщает(какой то набор) или тру или фелс || существует парикмахер или нет
+
+end
+
+def seed_db db, barbers #db - принимает обьект для работы с базой данной  и принимать || # seed - наполнение чего то 	
+
+		barbers.each do |barber| # будет проходиться по всем 
+		if !is_barber_exists? db, barber # будет спрошиват есть ли этот парикмахер 
+			db.execute 'insert into Barbers (name) values(?)', [barber] # будет вставлять парикмахера если его нету
+		end
+	end	 
+end
+
+
 def get_db
-	db = SQLite3::Database.new 'barbershop.db'
+	db = SQLite3::Database.new 'barbershop.db'# создает новую базу данных
 	db.results_as_hash = true
 	return db
 end	
 
-configure do 
+
+
+configure do # запускаеться во время включения програмы ||  функция создана для того что бы быводить из базы данный списки в веб для разных таблиц
 	db = get_db
 	db.execute 'CREATE TABLE IF NOT EXISTS
 		"Users" 
@@ -20,8 +38,17 @@ configure do
 			"datestamp"	TEXT, 
 			"barber" TEXT, 
 			"color"	TEXT
-		)';	
-end		
+		)'	
+
+	db.execute 'CREATE TABLE IF NOT EXISTS
+		"Barbers" 
+		(
+			"id" INTEGER PRIMARY KEY AUTOINCREMENT, 
+			"name" TEXT 
+		)'		
+	
+	seed_db db,['Jessie Pinkman','Walter White','Gus Fring','Mike Ehrmantraut'] # будет вызывать функцию из def is_barber_exists? db, name
+end	
 
 
 get '/' do
@@ -106,6 +133,5 @@ post '/contacts' do
  erb "Даныне получены"
 end	
 #=======================================================================================================================================================================
-
 
 #======================================================================================================================================================================
