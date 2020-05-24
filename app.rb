@@ -5,7 +5,7 @@ require 'sqlite3'
 
 
 def is_barber_exists? db, name # db - принимает обьект для работы с базой данной  || name - имя парикмахера, будет спрашивать есть он или нету || эта функция обращаеться в db 41 строка
-	db.execute('select*from Barbers where name=?', [name]).length > 0 # выражение возврщает(какой то набор) или тру или фелс || существует парикмахер или нет
+	db.execute('select * from Barbers where name=?', [name]).length > 0 # выражение возврщает(какой то набор) или тру или фелс || существует парикмахер или нет
 
 end
 
@@ -25,7 +25,7 @@ def get_db
 	return db
 end	
 
-before do # предназначен для синатры для того что бы исполнять какой то код перед кажыдым запросом  
+before do # предназначен для синатры для того что бы исполнять какой то код перед кажыдым запросом  к любому URL (get,post)
 	db = get_db
 	@barbers = db.execute 'select * from Barbers' # пременная которая теперь будет во всех вью
 end 	
@@ -72,14 +72,14 @@ post '/visit' do
 
 	@username = params[:username]
 	@phone = params[:phone]
-	@datetime = params[:datetime]
+	@datetime = params[:time]
 	@barber = params[:barber]
 	@color = params[:color]
 
 	# хеш
 	hh = { 	:username => 'Введите имя',
 			:phone => 'Введите телефон',
-			:datetime => 'Введите дату и время' }
+			:time => 'Введите дату и время' }
 
 	@error = hh.select {|key,_| params[key] == ""}.values.join(", ")
 
